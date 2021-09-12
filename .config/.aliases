@@ -1,0 +1,79 @@
+ERROR_001="Please Use kgetns to list namespaces & use ksetns to set default namespace"
+
+
+
+function psexport { 
+	if [ -z ${NAMESPACE} ] ; then
+		export PS1=${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \[${NAMESPACE}\]\$ ; 
+	elif [ -z ${AWS_ENV} ]; then
+		export PS1=${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \[${AWS_ENV}\] \$ ; 
+	elif [ -z ${NAMESPACE} ] && [ -z ${AWS_ENV} ] ; then 		
+		export PS1=${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \[${AWS_ENV}\] \[${NAMESPACE}\]\$ ; 
+	else [ ! -z ${NAMESPACE} ] && [ ! -z ${AWS_ENV} ] ; then 
+		export PS1=${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \[${AWS_ENV}\] \[${NAMESPACE}\]\$ ; 
+	fi
+
+}
+
+
+function kconfig { export KUBECONFIG=~/.kube/i2-eks-${1}-50 ; psexport ; }
+function ksetns { export NAMESPACE=${1} ; psexport ;}
+
+function kbash { kubectl exec -it bash ${NAMESPACE} ${1} ; }
+function ksh { kubectl exec -it sh ${NAMESPACE} ${1} ; }
+
+##### kubectl get
+function kgetns   { kubectl get ns ; }
+function knodes   { kubectl get nodes $@ ;}
+
+function kgetpods   { if [[ -z  ${NAMESPACE} ]]; then kubectl -n ${NAMESPACE} get pods $@ ; else  echo -e "[ERROR] ${ERROR_001}"; fi ; }
+
+function kgetpol  { kubectl -n ${NAMESPACE} get pods --show-labels ; }
+function kgetsec  { kubectl -n ${NAMESPACE} get secret ; }
+function kgetdeploy { kubectl -n ${NAMESPACE} get deployment ; }
+function kgetsvc { kubectl -n ${NAMESPACE} get svc ; }
+function kgetds { kubectl -n ${NAMESPACE} get deamonset ; }
+function kgeting { kubectl -n ${NAMESPACE} get ing ; }
+function kdiscribe { kubectl -n ${NAMESPACE} describe po ${1} ; }
+##### kubectl logs
+function klog { kubectl -n ${NAMESPACE} logs ${1} ; }
+function klogl { kubectl -n ${NAMESPACE} logs ${1} -l ${2}; }
+##### kubectl edit
+function keditdeploy { kubectl -n ${NAMESPACE} edit deployment ${1} ; }
+function keditcm { kubectl -n ${NAMESPACE} edit configmap ${1} ; }
+function keditsec { kubectl -n ${NAMESPACE} edit secret ${1} ; }
+function keditds { kubectl -n ${NAMESPACE} edit deamonset ${1} ; }
+#function kedit { kubectl -n ${NAMESPACE} edit deployment ${1} ; }
+
+#### AWS Functions
+function awssourcelist	{ ls -l ~/.aws/ ; }
+function awssource { source ~/.aws/aws-rnd-i2-${1}-box ; export AWS_ENV=${1} ; }
+
+#### kubectl exports
+export -f kconfig
+export -f ksetns
+#### kubectl export get
+export -f kgetns
+export -f kdiscribe 
+export -f knodes
+export -f kgetpods
+export -f kgetpol
+export -f kgetsec
+export -f kgetdeploy
+export -f kgetsvc
+export -f kgetds
+export -f kgeting 
+export -f kbash
+export -f klog
+export -f klogl
+export -f ksh
+
+export -f keditdeploy
+export -f keditcm
+export -f keditsec
+export -f keditds
+
+
+#### aws exports
+export -f awssourcelist
+export -f awssource

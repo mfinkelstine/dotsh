@@ -1,0 +1,54 @@
+#!/bin/bash
+
+ERROR_001="[ERROR] Please Use kconfig with env name e.g. dev/pre-prod/prod"
+ERROR_002="[ERROR] Please Use kgetns to list namespaces & use ksetns to set default namespace"
+ERROR_003="[ERROR] Please choose AWS Source from list awssourcelist command"
+
+export_list=("kconfigset" "awsset" "ksetns" )
+
+
+function psexport { 
+	if [[ ! ${SET_K8S_ENV} == ""  &&  ${SET_AWS_ENV} ==  ""  &&   ${SET_K8S_NS} == "" ]]; then
+		echo "KUBE ENV Defined ${KUBEENV}"
+		ENV_EXPORTED="${KUBEENV}"
+ 	elif [[  ${NAMESPACE} == ""  &&  ${KUBEENV} == ""  &&  ${AWS_ENV} ==  "" ]]; then
+		echo "KUBE ENV & NAMESPACE  Defined"
+		ENV_EXPORTED="${NAMESPACE} ${KUBEENV}"
+ 	elif [[  ${NAMESPACE} == "" && ${KUBEENV} == "" && ${AWS_ENV} == "" ]]; then
+		echo "KUBE ENV & NAMESPACE & AWS_ENV Defined"
+		ENV_EXPORTED="${NAMESPACE} ${KUBEENV} ${AWS_ENV}"
+	elif [[ ${AWS_ENV} ==  "" && ! ${NAMESPACE} == "" ]]; then
+		echo "AWS Defined"
+		ENV_EXPORTED=""
+	elif [ ${NAMESPACE}"x" != ${NAMESPACE}"x" ] && [ ${AWS_ENV}"x" == ${AWS_ENV}"x" ] ; then
+		echo "AWS & KUBE Defined"
+		ENV_EXPORTED=""
+	elif [  "${NAMESPACE}test" == "test" ] && [ "${AWS_ENV}test" == "test" ] ; then 
+		echo "None Defined"
+		ENV_EXPORTED=""
+	fi
+
+        export	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\] $ENV_EXPORTED :\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+}
+
+
+__aws_caller_identity() {
+	aws sts get-caller-identity --query 'Account' --output text
+}
+__aws_account_alias(){
+	aws iam list-account-aliases --query 'AccountAliases[0]' --output text
+}
+
+function kconfig         { if  [ ${1} == "" ] ; then echo -e "${ERROR_001}" ; psexport ; else export KUBECONFIG=~/.kube/i2-eks-${1}-50 ; export KUBEENV=${1} ;psexport ; fi ; }
+function ksetns          { export NAMESPACE=${1} ; psexport ;}
+
+#### AWS Functions
+function awssourcelist	 { ls -l ~/.aws/ ; }
+function awssource       { if [ ${1} == "" ]; then echo -e "${ERROR_003}\n" ; psexport ; else source ~/.aws/aws-rnd-i2-${1}-box ; export AWS_ENV=${1} ; psexport ;fi ; }
+export -f awssource 
+export -f awssourcelist 
+export -f ksetns
+export -f kconfig
+
+exec bash -i

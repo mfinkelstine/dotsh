@@ -1,0 +1,36 @@
+[user]
+    name = Meir Finkelstine
+    email = meirf@checkpoint.com
+[color]
+    branch = auto
+    diff = auto
+    interactive = auto
+    pager = true
+    status = auto
+    ui = true
+[color "status"]
+    added = green
+    changed = yellow
+    untracked = red
+[push]
+    default = current
+[core]
+    autocrlf = input
+    pager = less -FRSX
+[alias]
+    ci = commit
+    co = checkout
+    st = status -sb
+    lg = log --graph --pretty=format:'%C(yellow)%h%C(auto)%d%Creset %s %C(white)- %an, %ar%Creset'
+[credential]
+    helper = store
+[merge]
+    tool = vscode
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+[diff]
+    tool = vscode
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
+[http]
+    sslVerify = false
