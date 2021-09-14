@@ -3,7 +3,13 @@
 
 [[ -z "$WPATH" ]] && export WPATH="$(dirname "${BASH_SOURCE[0]}")"
 
+export LC_ALL="en_US.utf-8"
+export LC_CTYPE="en_US.utf-8"
+export LANG="en_US.utf-8"
+
 export DOTSH="${WPATH}/.dotfiles"
+export DOTFILES="$HOME/.dotfiles"
+export DOTLIB="$DOTFILES/lib"
 
 source ${DOTSH}/lib/system.functions.bash
 # for examples
