@@ -8,13 +8,13 @@ Dotfiles are installed by running one of the following commands in your terminal
 **via `curl`**
 
 ```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/denysdovhan/dotfiles/master/installer.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/mfinkelstine/dotsh/master/installer.sh)"
 ```
 
 **via `wget`**
 
 ```sh
-bash -c "$(wget https://raw.githubusercontent.com/mfinkelstine/dotfiles/master/installer.sh -O -)"
+bash -c "$(wget https://raw.githubusercontent.com/mfinkelstine/dotsh/master/installer.sh -O -)"
 ```
 
 Tell Git who you are using these commands:
