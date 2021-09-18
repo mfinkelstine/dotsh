@@ -3,7 +3,7 @@
 command_exec="kubectl"
 
 if ! command -v ${command_exec} >/dev/null ; then
-  printf " ${command_exec} plugin: tmux not found. Please install ${command_exec} before using this plugin." >&2
+  printf "plugin: ${command_exec}  not found. Please install ${command_exec} before using this plugin." >&2
   return 1
 fi
 
