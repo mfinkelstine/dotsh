@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-#source ${DOTSH}
+source ${DOTLIB}/logger.function.bash
 
 system::is_plugin_enabled(){
 	local file_name=$1
+	
 }
 
 system::is_directory(){
