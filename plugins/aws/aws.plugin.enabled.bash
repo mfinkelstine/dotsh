@@ -24,6 +24,14 @@ function asp() {
   export AWS_EB_PROFILE=$1
 }
 
+function hostname_from_instance() {
+    echo $(aws ec2 describe-instances --instance-ids=$1 --query='Reservations[0].Instances[0].PublicDnsName' | tr -d '"')
+}
+
+function ip_from_instance() {
+    echo $(aws ec2 describe-instances --instance-ids=$1 --query='Reservations[0].Instances[0].PublicIpAddress' | tr -d '"')
+}
+
 function _aws_profiles() {
   reply=($(aws_profiles))
 }

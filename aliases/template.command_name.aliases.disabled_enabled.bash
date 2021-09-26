@@ -3,6 +3,9 @@
 # adding time to the commands because I'm very interested
 # in how long these activities take with more complex builds
 # across disparate platforms
+
+source ${DOTLIB}/system.function.bash
+
 command_exec="COMAND"
 
 if ! command -v ${command_exec} >/dev/null; then

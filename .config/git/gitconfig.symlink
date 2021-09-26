@@ -1,6 +1,7 @@
-[user]
-    name = Meir Finkelstine
-    email = meirf@checkpoint.com
+[init]
+    defaultBranch = main
+[include]
+	path = ~/.gitconfig.local
 [color]
     branch = auto
     diff = auto
@@ -8,32 +9,72 @@
     pager = true
     status = auto
     ui = true
+[color "branch"]
+    current = green bold
+    local = green
+    remote = red bold
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
 [color "status"]
     added = green
     changed = yellow
     untracked = red
+[color "sh"]
+    branch = yellow	
 [push]
     default = current
+[branch]
+    # set up 'git pull' to rebase instead of merge
+    autosetuprebase = always
+[pull]
+    rebase = true
+[apply]
+    # do not warn about missing whitespace at EOF
+    whitespace = nowarn
 [core]
     autocrlf = input
-    pager = less -FRSX
-
-
-[credential]
-    helper = store
+    pager = delta
+	excludesfile = ~/.gitignore
+    editor = vim
+    whitespace = cr-at-eol
+[delta]
+    features = unobtrusive-line-numbers decorations
+    whitespace-error-style = 22 reverse
+    syntax-theme = base16-256
+[delta "unobtrusive-line-numbers"]
+    line-numbers = true
+    line-numbers-left-format = "{nm:>4}┊"
+    line-numbers-right-format = "{np:>4}│"
+    line-numbers-left-style = blue
+    line-numbers-right-style = blue
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+    hunk-header-decoration-style = yellow box
 [merge]
     tool = vscode
 [mergetool "vscode"]
     cmd = code --wait $MERGED
+[grep]
+    extendRegexp = true
+    lineNumber = true
 [diff]
     tool = vscode
+	renames = copies
+    mnemonicprefix = true
+    compactionHeuristic = true
 [difftool "vscode"]
     cmd = code --wait --diff $LOCAL $REMOTE
+[rebase]
+	instructionFormat = "[%an - %ar] %s"
+	autoStash = true
 [http]
     sslVerify = false
-# Allow local customizations in the .gitconfig_local file
-[include]
-	path = ~/.gitconfig_local    
+
 [alias]
 	dropbox = ! "git-dropbox-manage"
 	exec = ! "exec"

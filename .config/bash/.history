@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-shopt -s histappend # append to bash_history if Terminal.app quits
 
 ## Command history configuration
 if [ -z "$HISTFILE" ]; then
@@ -9,16 +8,12 @@ fi
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
-
 # some moderate history controls taken from sensible.bash
 ## SANE HISTORY DEFAULTS ##
-
 # Append to the history file, don't overwrite it
 shopt -s histappend
-
 # Save multi-line commands as one command
 shopt -s cmdhist
-
 # use readline on history
 shopt -s histreedit
 
