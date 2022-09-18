@@ -32,8 +32,8 @@ shopt -s lithist
 PROMPT_COMMAND='history -a'
 
 # Huge history. Doesn't appear to slow things down, so why not?
-HISTSIZE=500000
-HISTFILESIZE=100000
+HISTSIZE=10000
+HISTFILESIZE=500000000
 
 # Avoid duplicate entries
 HISTCONTROL="erasedups:ignoreboth"

@@ -1,19 +1,31 @@
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+# plugins to load
+plugins=( git )
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+[[ -z "$HOME_PATH" ]] && export WPATH="$(dirname "${BASH_SOURCE[0]}")"
+### DOTMF global env variables
+export DOTMF="${HOME_PATH}/.dotfiles"
+export MBP_PATH="${HOME_PATH}/.dotfiles"
+printf "\n\n\n\MBP_PATH %s " "${MBP_PATH}"
+source ${MBP_PATH}/lib/main.functions.bash
 
-[[ -z "$WPATH" ]] && export WPATH="$(dirname "${BASH_SOURCE[0]}")"
-
-export LC_ALL="en_US.utf-8"
-export LC_CTYPE="en_US.utf-8"
-export LANG="en_US.utf-8"
-
-export DOTSH="${WPATH}/.dotfiles"
-export DOTFILES="$HOME/.dotfiles"
-export DOTLIB="$DOTFILES/lib"
-
-source ${DOTSH}/lib/system.functions.bash
 # for examples
 source /usr/share/bash-completion/bash_completion
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+
+## lib configuration
+## load system configuraiton
+## load config files
+for file in ".bash_aliases" ".colors" ".history" ".functions"; do
+    #printf "[INFO] source file %s\n" "${HOME}/${file}"
+    [ -r "${HOME}/${file}" ] && [ -f "${HOME}/${file}" ] && source "${HOME}/${file}"
+done
+## load plugins
 system::load_plugins
 
 # If set, the pattern "**" used in a pathname expansion context will
@@ -70,14 +82,92 @@ xterm*|rxvt*)
     ;;
 esac
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
 fi
+
+# colored GCC warnings and errors
+# export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+# on premise kubernetes
+alias kold='export KUBECONFIG=~/.kube/i2-eks-on-prem-old'
+alias knew='export KUBECONFIG=~/.kube/i2-on-premise-k8s-new'
+# Alias definitions.
+
+
+#### dotmf history configuration #################################
+#!/usr/bin/env bash
+shopt -s histappend # append to bash_history if Terminal.app quits
+
+## Command history configuration
+if [ -z "$HISTFILE" ]; then
+  HISTFILE=$HOME/.bash_history
+fi
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# some moderate history controls taken from sensible.bash
+## SANE HISTORY DEFAULTS ##
+
+# Append to the history file, don't overwrite it
+shopt -s histappend
+
+# Save multi-line commands as one command
+shopt -s cmdhist
+
+# use readline on history
+shopt -s histreedit
+
+# load history line onto readline buffer for editing
+shopt -s histverify
+
+# save history with newlines instead of ; where possible
+shopt -s lithist
+
+# Record each line as it gets issued
+PROMPT_COMMAND='history -a'
+
+# Huge history. Doesn't appear to slow things down, so why not?
+HISTSIZE=10000
+HISTFILESIZE=500000000
+
+# Avoid duplicate entries
+HISTCONTROL="erasedups:ignoreboth"
+
+# Don't record some commands
+export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
+
+# Use standard ISO 8601 timestamp
+# %F equivalent to %Y-%m-%d                                                                                      
+# %T equivalent to %H:%M:%S (24-hours format)
+HISTTIMEFORMAT='%F %T '
+
+# Enable incremental history search with up/down arrows (also Readline goodness)
+# Learn more about this here: http://codeinthehole.com/writing/the-most-important-command-line-tip-incremental-hi
+# bash4 specific ??
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+bind '"\e[C": forward-char'
+bind '"\e[D": backward-char'
+### dormf history configuraiton ends #############################
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -91,3 +181,4 @@ if ! shopt -oq posix; then
 fi
 alias vi=vim
 nopource <(kubectl completion bash)
+source "${DOTPROMPT}/gitprompt.sh"
